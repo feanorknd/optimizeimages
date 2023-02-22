@@ -15,6 +15,7 @@ Select any of these options:
   -r, --resize		Select maximum size in pixels for the largest side, keeping aspect ratio
   -w, --width		Select maximum width in pixels for the images, keeping aspect ratio
   -v, --height		Select maximum height in pixels for the images, keeping aspect ratio
+  -u, --unsharp		Unsharp resized/shrinked images by using: -unsharp 1.5x1+0.7+0.02
   -d, --day		Just to process ONLY the last 24 hours images
   -j, --jpeg            Process ONLY jpegs
   -x, --png             Process ONLY pngs
@@ -51,6 +52,7 @@ while [[ "$#" > 0 ]]; do
     -r|--resize)	checkarg "resize" "$2"; RESIZE=true; MAX="$2"; shift;;
     -w|--width)		checkarg "width" "$2"; WIDTH=true; MAX="$2"; shift;;
     -v|--height)	checkarg "vertical" "$2"; HEIGHT=true; MAX="$2"; shift;;
+    -u|--unsharp)       UNSHARP="-unsharp 1.5x1+0.7+0.02" ;;
     -d|--day)		DAY=true ;;
     -j|--jpeg)		JPEG=true ;;
     -x|--png)		PNG=true ;;
@@ -134,7 +136,7 @@ do
 		then
 			echo "Applying largest dimesion resize to $image (maximum width or height: ${MAX} pixels)"
 			rsync -aE --quiet "$image" "${image}.old"
-			nice -n 19 ionice -c idle convert "$image" -resize "${MAX}x${MAX}>" "$image"
+			nice -n 19 ionice -c idle convert "$image" -resize "${MAX}x${MAX}>" ${UNSHARP} "$image"
 			touch -r "${image}.old" "$image"
 	                rm -f "${image}.old"
 		fi
@@ -146,7 +148,7 @@ do
                 then
                         echo "Applying Width resize to $image (orig: $IMGWIDTH new: ${MAX} pixels)"
                         rsync -aE --quiet "$image" "${image}.old"
-                        nice -n 19 ionice -c idle convert "$image" -resize "${MAX}" "$image"
+                        nice -n 19 ionice -c idle convert "$image" -resize "${MAX}" ${UNSHARP} "$image"
                         touch -r "${image}.old" "$image"
                         rm -f "${image}.old"
                 fi
@@ -158,7 +160,7 @@ do
                 then
                         echo "Applying Height resize to $image (orig: $IMGHEIGHT new: ${MAX} pixels)"
                         rsync -aE --quiet "$image" "${image}.old"
-                        nice -n 19 ionice -c idle convert "$image" -resize "x${MAX}" "$image"
+                        nice -n 19 ionice -c idle convert "$image" -resize "x${MAX}" ${UNSHARP} "$image"
                         touch -r "${image}.old" "$image"
                         rm -f "${image}.old"
                 fi
