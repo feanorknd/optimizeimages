@@ -17,7 +17,7 @@ How to use it:
   ./optimizeimages.sh -p|--path <path>
 
 Select any of these options:
-  -p, --path    <string>        Mandatory! Select path where images are
+  -p, --path    <string>        Mandatory! Select path where images are<BR>
   -q, --quality <integer>       Select final quality (DEFAULT: 75%)
   -r, --resize  <integer>       Select maximum size in pixels for the largest side, keeping aspect ratio
   -w, --width   <integer>       Select maximum width in pixels for the images, keeping aspect ratio
