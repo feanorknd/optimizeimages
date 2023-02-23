@@ -1,5 +1,6 @@
 # optimizeimages
 
+'''
 Code by Gino Morilla (2023)
 
 --
@@ -29,3 +30,4 @@ Select any of these options:
 -j, --jpeg                    Process ONLY jpeg files at path
 -x, --png                     Process ONLY pngs files at path
 -h, --help                    Some help here!
+'''
