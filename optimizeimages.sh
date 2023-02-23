@@ -100,18 +100,27 @@ REGEX="\(png\|jpg\|jpeg\)"
 [ $PNG ] && REGEX="png"
 
 echo "====================================================================================================================="
-echo "OPTIMIZING PATH: $IMAGES $(if [ $DAY ]; then echo "(today files)"; else echo "(all files)"; fi)"
-echo "QUALITY: $QUALITY $(if [ $RESIZE ]; then echo " | RESIZE (maximum side size: ${MAX}px)"; fi)"
+echo "OPTIMIZING PATH: $IMAGES"
+echo "OBJETIVE: $(if [ $DAY ]; then echo "Today "; else echo "All "; fi)$(if [ $PNG ]; then echo "PNG"; elif [ $JPEG ]; then echo "JPEG"; else echo "JPEG/PNG"; fi) files"
+echo "QUALITY: ${QUALITY}% (stripping Comments|Exif|IPTC|ICC|XMP markers from files)"
+if [ $RESIZE ] || [ $WIDTH ] || [ $HEIGHT ]; then echo "RESIZE: maximum $([ $RESIZE ] && echo "side")$([ $WIDTH ] && echo "width")$([ $HEIGHT ] && echo "height") size: ${MAX}px $([[ ! -z $UNSHARP ]] && echo " | Sharpness filter applied over shrinked images ($UNSHARP)")"; fi
 echo "====================================================================================================================="
+
+sleep 7
 
 NUMFILES=$(eval "find $IMAGES -type f -iregex '.*\.${REGEX}' $dayopts" | sort | wc -l)
 COUNTER=0
 
 while IFS= read -r image
 do
+	echo ""
+	echo "--"
 
 	let "COUNTER=COUNTER+1"
 	echo "Processing $COUNTER of $NUMFILES"
+
+	echo ""
+	echo "File: $image"
 
 	# If image contains errors or cannot be decoded, just skip
 	if ! identify "$image" > /dev/null 2>&1; then
@@ -134,7 +143,7 @@ do
 	then
 		if [ $IMGWIDTH -gt $MAX ] || [ $IMGHEIGHT -gt $MAX ]
 		then
-			echo "Applying largest dimesion resize to $image (maximum width or height: ${MAX} pixels)"
+			echo "Applying largest dimesion resize to $image (current: ${IMGWIDTH}x${IMGHEIGHT}px) (maximum width or height: ${MAX} pixels)"
 			rsync -aE --quiet "$image" "${image}.old"
 			nice -n 19 ionice -c idle convert "$image" -resize "${MAX}x${MAX}>" ${UNSHARP} "$image"
 			touch -r "${image}.old" "$image"
@@ -146,7 +155,7 @@ do
         then
                 if [ $IMGWIDTH -gt $MAX ]
                 then
-                        echo "Applying Width resize to $image (orig: $IMGWIDTH new: ${MAX} pixels)"
+                        echo "Applying Width resize to $image (current: ${IMGWIDTH}x${IMGHEIGHT}px) (maximum width: ${MAX} pixels)"
                         rsync -aE --quiet "$image" "${image}.old"
                         nice -n 19 ionice -c idle convert "$image" -resize "${MAX}" ${UNSHARP} "$image"
                         touch -r "${image}.old" "$image"
@@ -158,7 +167,7 @@ do
         then
                 if [ $IMGHEIGHT -gt $MAX ]
                 then
-                        echo "Applying Height resize to $image (orig: $IMGHEIGHT new: ${MAX} pixels)"
+                        echo "Applying Height resize to $image (current: ${IMGWIDTH}x${IMGHEIGHT}px) (maximum height: ${MAX} pixels)"
                         rsync -aE --quiet "$image" "${image}.old"
                         nice -n 19 ionice -c idle convert "$image" -resize "x${MAX}" ${UNSHARP} "$image"
                         touch -r "${image}.old" "$image"
@@ -200,5 +209,4 @@ do
 
 done < <(eval "find $IMAGES -type f -iregex '.*\.${REGEX}' $dayopts" | sort)
 
-echo "===================================================================================="
-
+echo "====================================================================================================================="
