@@ -1,4 +1,4 @@
-#OPTIMIZEIMAGE
+# optimizeimages
 
 Code by Gino Morilla (2023)
 
@@ -15,11 +15,11 @@ It will make use of following binaries which need to be installed:
 - convert (imagemagick)
 
 How to use it:
-  ./optimizeimages.sh -p|--path <path>
+ ./optimizeimages.sh -p|--path <path>
 
 Select any of these options:
-  -p, --path    <string>        Mandatory! Select path where images are
-  -q, --quality <integer>       Select final quality (DEFAULT: 75%)
+ -p, --path    <string>        Mandatory! Select path where images are
+ -q, --quality <integer>       Select final quality (DEFAULT: 75%)
   -r, --resize  <integer>       Select maximum size in pixels for the largest side, keeping aspect ratio
   -w, --width   <integer>       Select maximum width in pixels for the images, keeping aspect ratio
   -v, --height  <integer>       Select maximum height in pixels for the images, keeping aspect ratio
